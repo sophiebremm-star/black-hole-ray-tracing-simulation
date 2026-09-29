@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Black hole lens</title>
+  <meta name="description" content="Move a black hole across a galaxy and watch its gravity bend the light, live in your browser. A weak-field Schwarzschild lens with adjustable mass, distance and field of view.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23c6b8ff' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preload" href="assets/backgrounds/andromeda.jpg" as="fetch" type="image/jpeg" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <canvas id="lens" class="stage" role="img" aria-label="A background image whose light is bent by a black hole at the pointer"></canvas>
+
+  <aside id="panel" class="panel" aria-labelledby="panel-title">
+    <header id="panel-header" class="panel-header">
+      <div class="panel-heading">
+        <h1 id="panel-title" class="panel-title">Black hole lens</h1>
+        <p id="caption-line" class="caption-line" hidden><span id="caption-line-name" class="caption-line-name"></span>, <span id="caption-line-credit"></span></p>
+      </div>
+      <button id="panel-toggle" class="panel-toggle" type="button" aria-expanded="true" aria-controls="panel-body" aria-label="Controls">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 10 8 6l4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+    <div id="panel-body" class="panel-body">
+      <div class="panel-clip">
+        <div class="panel-content">
+          <div class="control">
+            <label for="mass">Mass</label>
+            <output id="mass-out" aria-live="off" for="mass">5.00 × 10⁵ M☉</output>
+            <input id="mass" type="range" min="0" max="1000" step="1" value="473" aria-valuetext="5.00 × 10⁵ M☉">
+          </div>
+          <div class="control">
+            <label for="distance">Distance</label>
+            <output id="distance-out" aria-live="off" for="distance">2.00 × 10⁵ ly</output>
+            <input id="distance" type="range" min="0" max="1000" step="1" value="631" aria-valuetext="2.00 × 10⁵ ly">
+          </div>
+          <div class="control">
+            <label for="fov">Field of view</label>
+            <output id="fov-out" aria-live="off" for="fov">5,000 mas</output>
+            <input id="fov" type="range" min="0" max="1000" step="1" value="537" aria-valuetext="5,000 mas">
+          </div>
+          <dl class="derived">
+            <div>
+              <dt>Einstein radius</dt>
+              <dd><output id="einstein" aria-live="off">258 mas</output></dd>
+            </div>
+            <div>
+              <dt>Shadow radius</dt>
+              <dd><output id="shadow" aria-live="off">0.418 µas</output></dd>
+            </div>
+          </dl>
+          <fieldset class="picker">
+            <legend>Background</legend>
+            <div id="presets" class="presets">
+              <label class="tile" title="Upload image">
+                <input id="upload" class="tile-input visually-hidden" type="file" accept="image/*">
+                <span class="tile-face tile-face-upload">
+                  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <span class="visually-hidden">Upload image</span>
+              </label>
+            </div>
+          </fieldset>
+          <p id="caption" class="caption" hidden>
+            <a id="caption-name" class="caption-name"></a>
+            <span id="caption-credit" class="caption-credit"></span>
+            <a id="caption-license" class="caption-license"></a>
+            <span id="caption-modified"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <script>
+    // Where the open panel would cover the image it starts collapsed, before first paint.
+    if (matchMedia('(max-width: 640px), (max-height: 500px)').matches) {
+      document.getElementById('panel').setAttribute('data-collapsed', '');
+      document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
+    }
+  </script>
+
+  <div class="overlays">
+    <p id="hint" class="hint">
+      <span class="hint-pointer">Move to bend light, scroll to change the mass, or drop in an image</span>
+      <span class="hint-touch">Touch and drag to bend light</span>
+    </p>
+
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+  </div>
+
+  <div id="drop" class="drop" aria-hidden="true">
+    <p>Drop the image to use it</p>
+  </div>
+
+  <div id="fatal" class="fatal" role="alert" hidden>
+    <p>This page needs WebGL2, which this browser doesn't provide.</p>
+  </div>
+
+  <noscript>
+    <div class="fatal">
+      <p>This page needs JavaScript to bend light. Turn it on and reload.</p>
+    </div>
+  </noscript>
+</body>
+</html>
